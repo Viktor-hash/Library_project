@@ -1,0 +1,31 @@
+Createur_original(#Nom : VARCHAR, #Prenom : VARCHAR, #Type : VARCHAR, #Date_naissance : TIMESTAMP)
+
+Oeuvre(titre : VARCHAR, #Reference : VARCHAR, classe_age : VARCHAR, mot_clef : VARCHAR)
+avec titre, classe_age, mot_clef NOT NULL
+
+Media(#type : VARCHAR,localisation : VARCHAR,#support : VARCHAR,#edition : VARCHAR)
+avec localisation,support,edition NOT NULL
+
+Proprietaire(#reference : VARCHAR, nom : VARCHAR, type : VARCHAR)
+avec nom et type NOT NULL
+
+Proprietaire_media(#proprietaire=>Proprietaire.reference,#type=>Media.type,#support=>Media.support,#edition=>Media.edition)
+
+Createur_original_oeuvre(#oeuvre=>Oeuvre.reference, #createur_nom=>Createur_original.nom,#createur_prenom=>Createur_original.prenom,#createur_type=>Createur_original.type,#createur_naissance=>Createur_original.Date_naissance)
+
+Ensemble_oeuvre(nom : VARCHAR, #reference : VARCHAR)
+avec nom NOT NULL
+
+Oeuvre_media(#type=>Media.type,#support=>Media.support,#edition=>Media.edition,#oeuvre=>Oeuvre.reference,ensemble=>Ensemble_oeuvre.reference)
+
+Extension_jeu_de_societe(nom : VARCHAR, #reference : VARCHAR,type=>Oeuvre_media.type,support=>Oeuvre_media.support,edition=>Oeuvre_media.edition,oeuvre=>Oeuvre_media.oeuvre)
+avec nom NOT NULL et support='jeu de societe' 
+
+Emprunteur(#Nom : VARCHAR, #Prenom : VARCHAR, #Date_naissance : TIMESTAMP)
+
+Pret(date_debut : TIMESTAMP, date_fin : TIMESTAMP, rendu : BOOLEAN,#type=>Oeuvre_media.type,#support=>Oeuvre_media.support,#edition=>Oeuvre_media.edition,#emprunteur_nom=>Emprunteur.nom,#emprunteur_prenom=>emprunteur.prenom,#emprunteur_date_naissance=>emprunteur.date_naissance)
+avec date_debut<=date_fin et date_debut,date_fin,rendu NOT NULL
+
+
+
+

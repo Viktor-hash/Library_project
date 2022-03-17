@@ -1,0 +1,29 @@
+Createur_original(#Nom : VARCHAR, #Prenom : VARCHAR, #Type : VARCHAR, #Date_naissance : TIMESTAMP)
+
+Oeuvre(titre : VARCHAR, #Reference : VARCHAR, classe_age : VARCHAR, mot_clef : VARCHAR)
+avec titre, classe_age, mot_clef NOT NULL
+
+Media(#reference : VARCHAR,type : VARCHAR,localisation : VARCHAR,support : VARCHAR,edition : VARCHAR,oeuvre=>Oeuvre.reference,ensemble_oeuvre=>Ensemble_oeuvre.reference,oeuvre_extension=>Media.reference)
+avec localisation,type,support,edition,oeuvre NOT NULL
+
+Contrainte : 
+ Si oeuvre_extension NOT NULL alors support='jeu de societe' et RESTRICTION(Media,reference=oeuvre_extension).support='jeu de societe'
+
+Proprietaire(#reference : VARCHAR, nom : VARCHAR, type : VARCHAR)
+avec nom et type NOT NULL
+
+Proprietaire_media(#proprietaire=>Proprietaire.reference,#media=>Media.reference)
+
+Createur_original_oeuvre(#oeuvre=>Oeuvre.reference, #createur_nom=>Createur_original.nom,#createur_prenom=>Createur_original.prenom,#createur_type=>Createur_original.type,#createur_naissance=>Createur_original.Date_naissance)
+
+Ensemble_oeuvre(nom : VARCHAR, #reference : VARCHAR)
+avec nom NOT NULL
+
+Emprunteur(#Nom : VARCHAR, #Prenom : VARCHAR, #Date_naissance : TIMESTAMP)
+
+Pret(date_debut : TIMESTAMP, date_fin : TIMESTAMP, rendu : BOOLEAN,#reference:VARCHAR,#media=>Media.reference,#emprunteur_nom=>Emprunteur.nom,#emprunteur_prenom=>emprunteur.prenom,#emprunteur_date_naissance=>emprunteur.date_naissance)
+avec date_debut<=date_fin et date_debut,date_fin,rendu NOT NULL
+
+
+
+

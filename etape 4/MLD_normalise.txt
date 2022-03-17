@@ -1,0 +1,92 @@
+Toutes les tables respectent une normalisation 3NF au minimum afin d'éviter la redondance.
+
+Createur_original(#Nom : VARCHAR, #Prenom : VARCHAR, #Type : VARCHAR, #Date_naissance : TIMESTAMP)
+
+On n'a pas de dépendances ici car la relation est toute clefs, on considère que l'ensemble des attributs permet de retrouver un createur original.
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates (ici on ne peut pas considérer que (nom,prenom)->Date_naissance)
+
+Oeuvre(titre : VARCHAR, #Reference : VARCHAR, classe_age : VARCHAR, mot_clef : VARCHAR)
+avec titre, classe_age, mot_clef NOT NULL
+
+On a les dépendances suivantes :
+
+- reference -> titre,classe_age,mot_clef	
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates (on aurait pu dire que classe_age dépend de mot_clef mais ça dépend de l'utilisation de mot_clef) 
+
+Media(#reference : VARCHAR,type : VARCHAR,localisation : VARCHAR,support : VARCHAR,edition : VARCHAR,oeuvre=>Oeuvre.reference,ensemble_oeuvre=>Ensemble_oeuvre.reference,oeuvre_extension=>Media.reference)
+avec localisation,type,support,edition,oeuvre NOT NULL
+
+On a les dépendances suivantes :
+
+- reference -> type,localisation,support,edition,oeuvre,ensemble_oeuvre,oeuvre_extension
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate (en effet ici on a une seule clef)
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates
+
+Proprietaire(#reference : VARCHAR, nom : VARCHAR, type : VARCHAR)
+avec nom et type NOT NULL
+
+On a les dépendances suivantes :
+
+- reference -> nom,type
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate(ici on a une seule clef)
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates(nom ne peut pas déterminer le type et inversement
+
+Proprietaire_media(#proprietaire=>Proprietaire.reference,#media=>Media.reference)
+
+On n'a pas de dépendances ici car la relation est toute clefs.
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates
+
+Createur_original_oeuvre(#oeuvre=>Oeuvre.reference, #createur_nom=>Createur_original.nom,#createur_prenom=>Createur_original.prenom,#createur_type=>Createur_original.type,#createur_naissance=>Createur_original.Date_naissance)
+
+On n'a pas de dépendances ici car la relation est toute clefs.
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates
+
+Ensemble_oeuvre(nom : VARCHAR, #reference : VARCHAR)
+avec nom NOT NULL
+
+On a les dépendances suivantes :
+
+- reference -> nom
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates
+
+Emprunteur(#Nom : VARCHAR, #Prenom : VARCHAR, #Date_naissance : TIMESTAMP)
+
+On n'a pas de dépendances ici car la relation est toute clefs.
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates
+
+Pret(date_debut : TIMESTAMP, date_fin : TIMESTAMP, rendu : BOOLEAN,#reference:VARCHAR,#media=>Media.reference,#emprunteur_nom=>Emprunteur.nom,#emprunteur_prenom=>emprunteur.prenom,#emprunteur_date_naissance=>emprunteur.date_naissance)
+avec date_debut<=date_fin et date_debut,date_fin,rendu NOT NULL
+
+On a les dépendances suivantes :
+
+- media,emprunteur_nom,emprunteur_prenom,emprunteur_date_naissance,reference -> date_debut,date_fin,rendu
+
+    - 1NF : elle possède au moins une clé et si tous ses attributs sont atomiques
+    - 2NF : 1NF + tout attribut n'appartenant à aucune clé candidate ne dépend pas d'une partie seulement d'une clé candidate
+    - 3NF : 2NF + tout attribut n'appartenant à aucune clé candidate ne dépend directement que de clés candidates
+
+
+
+

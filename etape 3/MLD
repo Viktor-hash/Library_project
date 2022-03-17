@@ -1,0 +1,38 @@
+Createur_original(#Nom : VARCHAR, #Prenom : VARCHAR, #Type : VARCHAR, #Date_naissance : TIMESTAMP)
+
+Oeuvre(titre : VARCHAR, #Reference : VARCHAR, classe_age : VARCHAR, mot_clef : VARCHAR)
+avec titre, classe_age, mot_clef NOT NULL
+
+Media(#type : VARCHAR,localisation : VARCHAR)
+avec localisation NOT NULL
+
+Proprietaire(#reference : VARCHAR, nom : VARCHAR, type : VARCHAR)
+avec nom et type NOT NULL
+
+Proprietaire_media(#proprietaire=>Proprietaire.reference,#media=>Media.type)
+
+Createur_original_oeuvre(#oeuvre=>Oeuvre.reference, #createur_nom=>Createur_original.nom,#createur_prenom=>Createur_original.prenom,#createur_type=>Createur_original.type,#createur_naissance=>Createur_original.Date_naissance)
+
+Ensemble_oeuvre(nom : VARCHAR, #reference : VARCHAR)
+avec nom NOT NULL
+
+Oeuvre_media(#media=>Media.type,#oeuvre=>Oeuvre.reference,edition : VARCHAR, quantite : INTEGER,ensemble=>Ensemble_oeuvre.reference)
+avec edition, quantite NOT NULL
+
+Support(#type : VARCHAR)
+
+Precision_quantite(#support=>Support.type,#media=>Oeuvre_media.media,#oeuvre=>Oeuvre_media.oeuvre,nombre_support : INTEGER)
+avec nombre_support NOT NULL
+
+Extension_jeu_de_societe(nom : VARCHAR, #reference : VARCHAR, quantite : INTEGER,jeu_support=>Precision_Quantite.support,jeu_media=>Precision_Quantite.media,jeu_oeuvre=>Precision_Quantite.oeuvre)
+avec nom, quantite NOT NULL et jeu_support=jeu de societe et si (jeu_media!=NULL ou jeu_support!=NULL ou jeu_oeuvre!=NULL) alors jeu_media,jeu_support et jeu_oeuvre NOT NULL et UNIQUE
+
+Emprunteur(#Nom : VARCHAR, #Prenom : VARCHAR, #Date_naissance : TIMESTAMP)
+
+Pret(date_debut : TIMESTAMP, date_fin : TIMESTAMP, rendu : BOOLEAN,#reference : VARCHAR,#oeuvre=>Oeuvre_media.oeuvre,#media=>Oeuvre_media.media,#emprunteur_nom=>Emprunteur.nom,#emprunteur_prenom=>emprunteur.prenom,#emprunteur_date_naissance=>emprunteur.date_naissance)
+avec date_debut<=date_fin et date_debut,date_fin,rendu NOT NULL
+
+
+
+
+

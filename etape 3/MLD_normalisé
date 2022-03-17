@@ -1,0 +1,118 @@
+/*DFE sous forme de fermeture transitive*/
+
+On peut considérer que le prénom et le nom détermine la date de naissance car on peut dire qu'il ne peut y avoir qu'une seule date de naissance pour un même couple nom prénom
+Createur_original+=prenom nom -> date_naissance
+
+Il s'agit donc bien ici d'une relation 1NF car il n'y a pas d'attribut multivalué
+Il ne s'agit pas d'une relation 2NF ici on peut donc la transformer de la façon suivante
+
+Createur_original_nom_prenom(#nom=>Createur_original_naissance,#prenom=>Createur_original_naissance,#type : VARCHAR)
+Createur_original_naissance(#nom : VARCHAR, #prenom : VARCHAR, Date_naissance : TIMESTAMP)
+
+Il s'agit maintenant de deux relations 3NF car les attributs dépendent de l'ensemble des clefs de la relation dont il font parti et non d'un autre attribut non clef
+
+On peut considérer que le mot_clef determine la classe d'age car on peut dire qu'il n'existe qu'une seule classe d'age pour un même mot_clef
+Oeuvre+ = reference ->titre, reference -> classe_age, reference -> mot_clef, mot_clef -> classe_age
+
+Il s'agit donc bien ici d'une relation 1NF car il n'y a pas d'attribut multivalué
+Il s'agit bien d'une relation 2NF car tous les attributs dépendent de l'ensemble des clefs de la relation
+Il ne s'agit pas d'une relation 3NF car classe_age dépend de mot_clef on peut donc la transformer de la façon suivante :
+
+Oeuvre_description(titre : VARCHAR, #Reference : VARCHAR, mot_clef=>Oeuvre_classe_age)
+Oeuvre_classe_age(#mot_clef : VARCHAR, classe_age : VARCHAR)
+
+Il s'agit maintenant de deux relations 3NF
+
+On peut considérer que le type et l'edition détermine le support car on peut dire qu'il n'existe qu'un seul support pour un même type et édition
+Media+ = type support edition -> localisation, type edition -> support
+
+Il s'agit donc bien ici d'une relation 1NF car il n'y a pas d'attribut multivalué
+Il ne s'agit pas d'une relation 2NF ici on peut donc la transformer de la façon suivante :
+
+Media_type_edition(#type=>Media_support,localisation : VARCHAR,#edition=>Media_support)
+Media_support(#type : VARCHAR, #edition : VARCHAR, support : VARCHAR)
+
+Il s'agit maintenant de deux relations 3NF car les attributs dépendent de l'ensemble des clefs de la relation dont il font parti et non d'un autre attribut non clef
+
+On ne peut pas considérer que le nom détermine le type ni que le type determine le nom car il peut y avoir plusieurs nom différents pour un même type et il peut y avoir plusieurs types différents pour un même nom
+Proprietaire+ = reference -> nom, reference-> type, reference->nom type
+
+Il s'agit donc bien ici d'une relation 1NF car il n'y a pas d'attribut multivalué
+Il s'agit bien d'une relation 2NF car tous les attributs dépendent de l'ensemble des clefs de la relation
+Il s'agit  bien d'une relation 3NF car les attributs dépendent de l'ensemble des clefs de la relation dont il font parti et non d'un autre attribut non clef
+
+Proprietaire_media est toute clef et n'a pas de DFE cependant il faut le modifier à cause des changements effectués précedemment : 
+
+Proprietaire_media(#proprietaire=>Proprietaire.reference,#type=>Media_type_edition,#edition=>Media_type_edition)
+
+Createur_original_oeuvre est toute clef et n'a pas de DFE cependant il faut le modifier à cause des changements effectués précedemment :
+
+Createur_original_oeuvre(#reference=>Oeuvre_description, #nom=>Createur_original_nom_prenom,#prenom=>Createur_original_nom_prenom,#type=>Createur_original_nom_prenom)
+
+DFE évidentes je n'en vois pas d'autres
+Ensemble_oeuvre+ = reference->nom
+
+DFE évidentes je n'en vois pas d'autres
+Oeuvre_media+ = type support edition oeuvre -> ensemble
+Cependant il faut le modifier à cause des changements effectués précedemment :
+
+Oeuvre_media(#type=>Media_type_edition,#edition=>Media_type_edition,#reference=>Oeuvre_description,ensemble=>Ensemble_oeuvre.reference)
+
+DFE évidentes je n'en vois pas d'autres 
+Extension_jeu_de_societe+ = reference -> nom type support edition oeuvre
+Cependant il faut le modifier à cause des changements effectués précedemment :
+
+Extension_jeu_de_societe(nom : VARCHAR, #reference : VARCHAR,type=>Oeuvre_media,edition=>Oeuvre_media,reference=>Oeuvre_media)
+
+Emprunteur+ = nom prenom -> date_naissance
+
+On peut donc le transformer ainsi de cette façon:
+
+Emprunteur(#Nom : VARCHAR, #Prenom : VARCHAR,Date_naissance : TIMESTAMP)
+
+pret+ = type support edition emprunteur_nom emprunteur_prenom emprunteur_date_naissance -> date_debut date_fin rendu
+
+Pret(date_debut : TIMESTAMP, date_fin : TIMESTAMP, rendu : BOOLEAN,#type=>Oeuvre_media.type,#edition=>Oeuvre_media.edition,#nom=>Emprunteur,#prenom=>emprunteur)
+
+
+
+
+Voici donc le nouveau MLD normalisé : 
+
+Createur_original_nom_prenom(#nom=>Createur_original_naissance,#prenom=>Createur_original_naissance,#type : VARCHAR)
+
+Createur_original_naissance(#nom : VARCHAR, #prenom : VARCHAR, Date_naissance : TIMESTAMP)
+avec Date_naissance NOT NULL
+
+Oeuvre_description(titre : VARCHAR, #Reference : VARCHAR, mot_clef=>Oeuvre_classe_age)
+avec titre et mot_clef NOT NULL
+
+Oeuvre_classe_age(#mot_clef : VARCHAR, classe_age : VARCHAR)
+avec classe_age NOT NULL
+
+Media_type_edition(#type=>Media_support,localisation : VARCHAR,#edition=>Media_support)
+avec localisation NOT NULL
+
+Media_support(#type : VARCHAR, #edition : VARCHAR, support : VARCHAR)
+avec support NOT NULL
+
+Proprietaire(#reference : VARCHAR, nom : VARCHAR, type : VARCHAR)
+avec nom et type NOT NULL
+
+Proprietaire_media(#proprietaire=>Proprietaire.reference,#type=>Media_type_edition,#edition=>Media_type_edition)
+
+Createur_original_oeuvre(#reference=>Oeuvre_description, #nom=>Createur_original_nom_prenom,#prenom=>Createur_original_nom_prenom,#type=>Createur_original_nom_prenom)
+
+Ensemble_oeuvre(nom : VARCHAR, #reference : VARCHAR)
+avec nom NOT NULL
+
+Oeuvre_media(#type=>Media_type_edition,#edition=>Media_type_edition,#reference=>Oeuvre_description,ensemble=>Ensemble_oeuvre.reference)
+
+Extension_jeu_de_societe(nom : VARCHAR, #reference : VARCHAR,type=>Oeuvre_media,edition=>Oeuvre_media,reference=>Oeuvre_media)
+avec nom NOT NULL
+
+Emprunteur(#Nom : VARCHAR, #Prenom : VARCHAR,Date_naissance : TIMESTAMP)
+avec date_naissance NOT NULL
+
+Pret(date_debut : TIMESTAMP, date_fin : TIMESTAMP, rendu : BOOLEAN,#type=>Oeuvre_media.type,#edition=>Oeuvre_media.edition,#nom=>Emprunteur,#prenom=>emprunteur)
+avec date_debut<=date_fin et date_debut, date_fin , rendu NOT NULL
